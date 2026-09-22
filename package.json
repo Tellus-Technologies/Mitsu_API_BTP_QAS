@@ -2,7 +2,7 @@
   "name": "my-node-api",
   "version": "1.0.0",
   "type": "module",
-  "engines": { "node": "20.x" },
+  "engines": { "node": "22.22.2" },
   "scripts": {
     "start": "node index.js"
   },

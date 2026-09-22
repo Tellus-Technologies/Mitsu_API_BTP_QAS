@@ -30,6 +30,18 @@ function sapV2DateToISO(val) {
   return Number.isNaN(d.getTime()) ? null : d.toISOString();
 }
 
+function getShortTextFromSap(wo = {}) {
+  return String(
+    wo?.ShortText ||
+      wo?.Shorttext ||
+      wo?.shortText ||
+      wo?.short_text ||
+      wo?.Description ||
+      wo?.description ||
+      ""
+  ).trim();
+}
+
 /** ===================== LISTA ÓRDENES ===================== */
 export async function listOrdenesSap({ start, end, user, mode = "range" }) {
   const s = safeYmd(start);
@@ -96,6 +108,9 @@ export async function listOrdenesSap({ start, end, user, mode = "range" }) {
       wo?.FinishDate || wo?.Finishdate || wo?.Finish_date
     );
 
+    // ✅ Campo de cobertura que viene de SAP
+    const shortText = getShortTextFromSap(wo);
+
     return {
       Orderid: orderid,
       orderid,
@@ -116,6 +131,14 @@ export async function listOrdenesSap({ start, end, user, mode = "range" }) {
       id_mecanico: wo?.IdMecanico || "",
       nombre_mecanico: wo?.NombreMec || "",
       nombre_cliente: wo?.NombreCliente || "",
+
+      // ✅ Cobertura de la orden
+      // En SAP viene como ShortText:
+      // "COBERTURA BASICA | Plan: 01|07"
+      ShortText: shortText,
+      shortText,
+      short_text: shortText,
+      cobertura: shortText,
 
       userstatus: us,
 
@@ -310,6 +333,9 @@ export async function getOrdenSapById(orderidRaw) {
     wo?.FinishDate || wo?.Finishdate || wo?.Finish_date
   );
 
+  // ✅ Campo de cobertura que viene de SAP
+  const shortText = getShortTextFromSap(wo);
+
   return {
     Orderid: wo?.Orderid || wo?.OrderId || wo?.Aufnr || orderid,
     orderid: wo?.Orderid || wo?.OrderId || wo?.Aufnr || orderid,
@@ -328,6 +354,12 @@ export async function getOrdenSapById(orderidRaw) {
     id_mecanico: wo?.IdMecanico || "",
     nombre_mecanico: wo?.NombreMec || "",
     nombre_cliente: wo?.NombreCliente || "",
+
+    // ✅ Cobertura de la orden
+    ShortText: shortText,
+    shortText,
+    short_text: shortText,
+    cobertura: shortText,
 
     userstatus: us,
     ...ui,
